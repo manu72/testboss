@@ -1,0 +1,50 @@
+# Git ignore for testboss project
+
+# Dependencies
+node_modules/
+.pnp.*
+.pnp.cjs
+
+# Python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+
+# Builds and outputs
+dist/
+build/
+out/
+.next/
+coverage/
+.cache/
+.parcel-cache/
+.temp/
+tmp/
+temp/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDE/editor
+.idea/
+.vscode/
+*.swp
