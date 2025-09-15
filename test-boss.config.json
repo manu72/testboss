@@ -1,0 +1,10 @@
+{
+  "defaultSuite": null,
+  "defaultEnv": "sit",
+  "ai": {
+    "enabled": true,
+    "provider": "openai",
+    "model": "gpt-4o-mini",
+    "maxTokens": 800
+  }
+}
