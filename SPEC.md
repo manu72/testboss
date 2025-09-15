@@ -29,6 +29,7 @@ Test Boss is a standalone CLI for Mac OS that lets a tester create a named suite
 - The user may want multiple saved sessions for different Salesforce users. The POC supports named sessions per suite.
 
 ## High level design
+- The project is structured as a pnpm monorepo.
 - CLI in TypeScript using Commander.
 - Playwright supplies browser control, recorder, and report.
 - A simple runtime reads suite YAML and executes actions. It wraps Playwright with consistent waits and error reporting.
@@ -112,17 +113,17 @@ suites/
 ## CLI commands
 ```
 tb init
-  Create local config in the current repo and a suites folder.
+  Create local config (e.g., `test-boss.config.json`) in the current repo and a suites folder.
 
 tb suite create <name> [--from-template <templateName>]
   Scaffold a suite with suite.yaml, env config, and starter steps.
 
 tb step record [--suite <name>] [--env sit] [--session <sessionName>] [--url <startUrl>] [--ai on|off]
   Open a headed browser, guide the user to log in, then capture actions.
-  Save to steps/<timestamp>_<title>.yaml after interactive confirmation.
+  Save to steps/<timestamp>_<title>.yaml after interactive confirmation, including AI-suggested locators and assertions.
 
 tb run [--suite <name>] [--env sit] [--session <sessionName>] [--headed] [--ai on|off]
-  Compile YAML to a transient Playwright spec and execute it.
+  Compile YAML to a transient Playwright spec (e.g., `spec.generated.ts`) and execute it. This generated file is temporary and will be cleaned up after execution.
   Save report, screenshots, video, and trace.
 
 tb report open [--suite <name>]
@@ -206,7 +207,7 @@ assertions:
 - visible_text with optional within scope
 - locator_exists
 - locator_has_value
-- api_check read only
+- api_check read only (POC: token handling minimal/omitted)
   - resource sObject name
   - id_from url_regex or var
   - expect map of field equals values
