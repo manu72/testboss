@@ -14,7 +14,8 @@
       "@testboss/cli/*": ["./packages/cli/src/*"],
       "@testboss/runtime/*": ["./packages/runtime/src/*"],
       "@testboss/ai/*": ["./packages/ai/src/*"]
-    }
+    },
+    "composite": true
   },
   "exclude": ["node_modules", "dist"]
 }

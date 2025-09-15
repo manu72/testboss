@@ -4,7 +4,9 @@
   "description": "Test Boss POC",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc -b",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cli": "node packages/cli/dist/index.js"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +17,7 @@
     "packages/*"
   ],
   "devDependencies": {
+    "@types/node": "^24.4.0",
     "playwright": "^1.55.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"

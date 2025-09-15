@@ -1,1 +1,1 @@
-{"name":"@testboss/cli","version":"1.0.0","description":"CLI for Test Boss","main":"src/index.ts","scripts":{"test":"echo \"Error: no test specified\" && exit 1"},"keywords":[],"author":"","license":"ISC","dependencies":{"commander":"^14.0.1","inquirer":"^12.9.6"}}
+{"name":"@testboss/cli","version":"1.0.0","description":"CLI for Test Boss","main":"src/index.ts","scripts":{"test":"echo \"Error: no test specified\" && exit 1"},"keywords":[],"author":"","license":"ISC","bin":{"tb":"./dist/index.js"},"dependencies":{"commander":"^14.0.1","inquirer":"^12.9.6"}}
