@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "commonjs",
+    "lib": ["es2020", "dom"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "@testboss/cli/*": ["./packages/cli/src/*"],
+      "@testboss/runtime/*": ["./packages/runtime/src/*"],
+      "@testboss/ai/*": ["./packages/ai/src/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist"]
+}

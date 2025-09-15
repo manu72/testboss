@@ -35,6 +35,7 @@ The following functionalities are explicitly out of scope for this Proof of Conc
 
 ## High-Level Design
 
+*   **Monorepo Structure:** The project is organized as a pnpm monorepo, with distinct packages for the CLI (`packages/cli`), runtime logic (`packages/runtime`), and AI helpers (`packages/ai`).
 *   **CLI:** Implemented in TypeScript using the Commander.js library.
 *   **Browser Control:** Playwright provides browser control, recording capabilities, and reporting.
 *   **Runtime:** A simple runtime reads suite YAML files and executes actions, wrapping Playwright with consistent waits and error reporting.
@@ -351,6 +352,24 @@ AI can be toggled off with a flag, in which case the recorder will retain raw Pl
 *   No secrets are written to YAML files.
 *   AI requests include only small DOM snippets and never contain full pages or credentials.
 *   The tool is designed to operate only on SIT or other non-production Salesforce organizations.
+
+## Getting Started
+
+To set up the project locally, follow these steps:
+
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository-url>
+    cd test-boss
+    ```
+2.  **Install pnpm:** If you don't have pnpm installed, you can install it globally using npm:
+    ```bash
+    npm install -g pnpm
+    ```
+3.  **Install dependencies:** Navigate to the project root and install all dependencies for the monorepo:
+    ```bash
+    pnpm install
+    ```
 
 ## Minimal Happy Path (Quick Start)
 

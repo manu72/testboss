@@ -1,0 +1,1 @@
+{"name":"@testboss/runtime","version":"1.0.0","description":"Runtime for Test Boss","main":"src/index.ts","scripts":{"test":"echo \"Error: no test specified\" && exit 1"},"keywords":[],"author":"","license":"ISC","dependencies":{"yaml":"^2.8.1","zod":"^4.1.8"}}
