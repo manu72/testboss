@@ -42,6 +42,11 @@ The following functionalities are explicitly out of scope for this Proof of Conc
 *   **AI Helpers:** AI operates on recorded events and small DOM snippets to propose better locators and assertions. A generic provider interface supports OpenAI-compatible or local models.
 *   **Data Storage:** All suite data resides under a `suites` directory, requiring no external services.
 
+## Testing
+
+*   **Unit & Integration Tests:** Jest is used for comprehensive unit and integration testing of individual modules and functions across all packages.
+*   **End-to-End Tests:** Playwright's test runner is utilized for executing the generated end-to-end browser automation tests.
+
 ## Folder Layout
 
 ```
