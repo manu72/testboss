@@ -2,9 +2,9 @@
 
 This document details the implementation plan for the Test Boss Proof of Concept (POC), focusing on the Playwright integration and adhering to the specifications outlined in `SPEC.md`.
 At each stage we will implement comprehensive unit tests and also update the README and SPEC as needed. Additionally we will pause and review the codebase at the end of each stage
-to ensure best practice is followed.
+to ensure best practice is followed and to ensure robust error handling.
 
-## I. Project Setup and Core Structure
+## Step 1. Project Setup and Core Structure
 
 1.  **Monorepo Initialization:**
     - Initialize a pnpm monorepo at the project root.
@@ -13,7 +13,7 @@ to ensure best practice is followed.
     - Install core dependencies: `playwright`, `commander`, `inquirer`, `zod`, `yaml` in their respective packages.
     - Set up `tsconfig.json` for each package and a root `tsconfig.json` for consistent TypeScript configuration.
 
-## II. CLI (`packages/cli`) Implementation
+## Step 2. CLI (`packages/cli`) Implementation
 
 The `packages/cli` will house the command-line interface logic using Commander.js.
 
@@ -82,7 +82,7 @@ The `packages/cli` will house the command-line interface logic using Commander.j
     - **Action:** Provide a summary of changes made or proposed.
     - **Verification:** Locators and assertions are updated in the YAML file (or reported in dry-run).
 
-## III. Runtime (`packages/runtime`) Implementation
+## Step 3. Runtime (`packages/runtime`) Implementation
 
 The `packages/runtime` will handle the execution logic, compiling YAML steps into Playwright tests.
 
@@ -121,7 +121,7 @@ The `packages/runtime` will handle the execution logic, compiling YAML steps int
 6.  **`storage.ts`:**
     - **Action:** Implement functions to load and save Playwright storage state JSON files.
 
-## IV. AI Layer (`packages/ai`) Implementation
+## Step 4. AI Layer (`packages/ai`) Implementation
 
 The `packages/ai` will provide the interface and implementations for AI assistance.
 
@@ -144,7 +144,7 @@ The `packages/ai` will provide the interface and implementations for AI assistan
 4.  **Safety and Redaction:**
     - **Action:** Implement a safe mode to redact long or sensitive attribute values from DOM snippets before sending them to the AI provider.
 
-## V. Templates (`templates/`)
+## Step 5. Templates (`templates/`)
 
 1.  **`templates/suite/` Directory:**
     - **Action:** Create `suite.yaml` with default suite configuration.
@@ -152,13 +152,27 @@ The `packages/ai` will provide the interface and implementations for AI assistan
     - **Action:** Create `steps/000_login.yaml` as a starter login step.
     - **Action:** Create `.auth/.gitignore` and `.gitignore` files within the template to ensure artifacts and auth states are ignored by default.
 
-## VI. General Considerations
+## Step 6. General Considerations
 
 1.  **Error Handling:** Implement robust error handling throughout the CLI and runtime, providing clear console summaries, step IDs, pass/fail status, duration, and paths to screenshots/traces on failure. Ensure non-zero exit codes for failed runs.
 2.  **YAML Schema Validation:** Utilize `zod` in the runtime to validate the structure and content of `suite.yaml` and step YAML files.
 3.  **Consistent Waits:** Ensure all Playwright actions in the runtime are wrapped with sensible waits (e.g., `waitFor({ state: "visible" })`, `waitUntil: "load"`) and auto-retry mechanisms for transient errors.
 
-## VII. Updates to `SPEC.md` and `README.md`
+## Step 7. Project Codebase Testing Strategy using Jest
+
+1.  **Purpose:** Jest will be the primary framework for unit and integration testing of individual functions, modules, and components across `packages/cli`, `packages/runtime`, and `packages/ai`. This ensures that internal logic is robust and well-tested. Playwright's own test runner will continue to be used for the end-to-end browser-based tests generated from YAML suites.
+2.  **Installation:**
+    - Install `jest`, `ts-jest`, and `@types/jest` as development dependencies at the root of the monorepo.
+3.  **Configuration:**
+    - Create a root `jest.config.js` (or `jest.config.ts`) file with `preset: 'ts-jest'`, `testEnvironment: 'node'`, and `testMatch` patterns to discover tests across all packages.
+    - Configure `moduleNameMapper` to handle path aliases defined in `tsconfig.json`.
+4.  **Test Scripts:**
+    - Add a `test` script to the root `package.json` (e.g., `"test": "jest --passWithNoTests"`). Individual packages will not require their own `test` scripts.
+5.  **Test File Structure:**
+    - Test files will be placed alongside the source code they are testing, named `[module].test.ts` or `[module].spec.ts`.
+6.  **Mocking:** Utilize Jest's mocking capabilities to isolate units of code during testing.
+
+## 8. Updates to `SPEC.md` and `README.md`
 
 Based on this detailed plan, the following improvements will be made to `SPEC.md` and `README.md`:
 
