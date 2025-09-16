@@ -3,7 +3,7 @@
     "target": "es2020",
     "module": "commonjs",
     "lib": ["es2020", "dom"],
-    "types": ["jest", "node", "playwright", "js-yaml"],
+    "types": ["jest", "node", "js-yaml"],
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
