@@ -102,20 +102,45 @@ export const runCommand = new Command()
     console.log(`Generated dummy spec file: ${generatedSpecPath}`);
 
     // 6. Execute Playwright test
+    const tempPlaywrightConfigPath = path.join(suitePath, 'generated', 'playwright.config.ts');
+    const headlessMode = options.headed ? false : (envConfig.playwright.headless === false ? false : true);
+
+    let playwrightConfigContent = `
+      import { defineConfig, devices } from '@playwright/test';
+      import * as path from 'path';
+
+      export default defineConfig({
+        testDir: path.dirname('${generatedSpecPath}'), // Look for tests in the same directory as the spec
+        outputDir: '${path.join(suitePath, 'artifacts', 'last-run')}',
+        use: {
+          baseURL: '${envConfig.baseUrl || envConfig.loginHost}',
+          headless: ${headlessMode},
+          viewport: ${JSON.stringify(envConfig.playwright.viewport)},
+          actionTimeout: ${envConfig.timeouts.actionMs},
+          navigationTimeout: ${envConfig.timeouts.expectMs},
+          // Add other common use options from envConfig if needed
+        },
+        projects: [
+          {
+            name: 'chromium',
+            use: {
+              ...devices['Desktop Chrome'],
+              // Conditional storageState
+              ${fs.existsSync(storageStatePath) ? `storageState: '${storageStatePath}',` : ''}
+            },
+          },
+        ],
+      });
+    `;
+
+    await fs.writeFile(tempPlaywrightConfigPath, playwrightConfigContent);
+    console.log(`Generated temporary Playwright config: ${tempPlaywrightConfigPath}`);
+
     const playwrightArgs: string[] = [
       'test',
       generatedSpecPath,
-      '--project=chromium',
-      `--output=${path.join(suitePath, 'artifacts', 'last-run')}`,
+      `--config=${tempPlaywrightConfigPath}`,
     ];
-
-    if (options.headed || envConfig.playwright.headless === false) {
-      playwrightArgs.push('--headed');
-    }
-
-    if (fs.existsSync(storageStatePath)) {
-      playwrightArgs.push(`--use-options={"storageState":"${storageStatePath}"}`);
-    }
 
     console.log(`Running Playwright tests for suite '${suiteName}' (${options.env} / ${options.session})...`);
 
@@ -127,6 +152,8 @@ export const runCommand = new Command()
       } else {
         console.error(`Playwright tests failed with exit code ${code}`);
       }
+      await fs.remove(generatedSpecPath); // Clean up generated spec file
+      await fs.remove(tempPlaywrightConfigPath); // Clean up generated config file
       process.exit(code || 0);
     });
 
