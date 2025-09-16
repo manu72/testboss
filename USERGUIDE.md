@@ -15,26 +15,55 @@ This guide provides instructions for manually testing the Proof of Concept (POC)
     git clone <repository-url> # Replace with the actual repository URL
     cd test-boss
     ```
+
 2.  **Install dependencies:**
     ```bash
     pnpm install
     ```
+
 3.  **Build the CLI package:** This compiles the TypeScript code into JavaScript.
     ```bash
     pnpm build
     ```
-4.  **Link the CLI package:** This makes the `tb` command available in your shell.
+
+4.  **Install Playwright browsers:** This downloads the browser binaries needed for testing.
     ```bash
-    pnpm link --global @testboss/cli
+    npx playwright install
     ```
-    *   **Note:** If you encounter a `EACCES` permission error, you might need to run this with `sudo` (e.g., `sudo pnpm link --global @testboss/cli`) or configure pnpm for global installations without `sudo`.
+
+5.  **Run the CLI:** Since this is a monorepo setup, use one of these approaches:
+
+    **Option A: Direct execution (Recommended)**
+    ```bash
+    npm run cli -- <command>
+    # Examples:
+    npm run cli -- init
+    npm run cli -- suite create "MyTest"
+    ```
+
+    **Option B: Node execution**
+    ```bash
+    node packages/cli/dist/index.js <command>
+    # Examples:
+    node packages/cli/dist/index.js init
+    node packages/cli/dist/index.js suite create "MyTest"
+    ```
+
+    **Option C: Global linking (if preferred)**
+    ```bash
+    pnpm link --global packages/cli
+    # Then use: tb <command>
+    ```
+    *Note: If linking fails due to permissions, try with `sudo` or configure pnpm for global installations.*
 
 ## 1. Initialize the Project
 
 This step sets up the necessary local configuration and creates the `suites` folder where your test suites will reside.
 
 ```bash
-tb init
+npm run cli -- init
+# OR: node packages/cli/dist/index.js init
+# OR: tb init (if globally linked)
 ```
 
 **Expected Output:**
@@ -46,7 +75,9 @@ tb init
 This command scaffolds a new test suite with a `suite.yaml` file, environment configuration, and starter steps.
 
 ```bash
-tb suite create "Accounts_Smoke"
+npm run cli -- suite create "Accounts_Smoke"
+# OR: node packages/cli/dist/index.js suite create "Accounts_Smoke"
+# OR: tb suite create "Accounts_Smoke" (if globally linked)
 ```
 
 **Expected Output:**
@@ -58,7 +89,9 @@ tb suite create "Accounts_Smoke"
 This command opens a headed browser, allowing you to manually log into Salesforce and record your actions. The recorded actions will be captured (though currently only logged to console, not saved to YAML).
 
 ```bash
-tb step record --suite "Accounts_Smoke" --env sit
+npm run cli -- step record --suite "Accounts_Smoke" --env sit
+# OR: node packages/cli/dist/index.js step record --suite "Accounts_Smoke" --env sit
+# OR: tb step record --suite "Accounts_Smoke" --env sit (if globally linked)
 ```
 
 **Instructions during recording:**
@@ -76,7 +109,9 @@ tb step record --suite "Accounts_Smoke" --env sit
 This command compiles the YAML steps defined in your suite into a transient Playwright spec and executes it in a browser. The `--headed` option makes the browser visible during execution.
 
 ```bash
-tb run --suite "Accounts_Smoke" --env sit --headed
+npm run cli -- run --suite "Accounts_Smoke" --env sit --headed
+# OR: node packages/cli/dist/index.js run --suite "Accounts_Smoke" --env sit --headed
+# OR: tb run --suite "Accounts_Smoke" --env sit --headed (if globally linked)
 ```
 
 **Expected Output:**
@@ -89,8 +124,47 @@ tb run --suite "Accounts_Smoke" --env sit --headed
 After running a test suite, you can open the generated Playwright HTML report to view detailed results.
 
 ```bash
-tb report open --suite "Accounts_Smoke"
+npm run cli -- report open --suite "Accounts_Smoke"
+# OR: node packages/cli/dist/index.js report open --suite "Accounts_Smoke"
+# OR: tb report open --suite "Accounts_Smoke" (if globally linked)
 ```
 
 **Expected Output:**
 *   The default web browser will open, displaying the Playwright HTML report for the `Accounts_Smoke` suite.
+
+## Troubleshooting
+
+### Build Issues
+If you encounter build errors:
+```bash
+# Clean and rebuild
+rm -rf dist packages/*/dist
+pnpm build
+```
+
+### Missing Dependencies
+If you see import errors or missing module errors:
+```bash
+# Reinstall all dependencies
+rm -rf node_modules packages/*/node_modules
+pnpm install
+pnpm build
+```
+
+### Playwright Browser Issues
+If Playwright fails to launch browsers:
+```bash
+# Reinstall Playwright browsers
+npx playwright install
+```
+
+### CLI Command Not Found
+If `tb` command is not found after global linking:
+- Use the direct execution methods: `npm run cli --` or `node packages/cli/dist/index.js`
+- Check your PATH and pnpm global configuration
+- Verify the build completed successfully
+
+### Permission Issues
+If you encounter permission errors:
+- Try using `sudo` with global installation commands
+- Or configure pnpm to use a user directory for global packages

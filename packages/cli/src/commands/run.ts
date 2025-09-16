@@ -3,8 +3,8 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import { spawn } from 'child_process';
 import * as yaml from 'js-yaml';
-import { compileSuite } from '../../runtime/src/compiler';
-import { loadStorageState } from '../../runtime/src/storage';
+import { compileSuite } from '@testboss/runtime/compiler';
+import { loadStorageState } from '@testboss/runtime/storage';
 
 const SUITES_DIR = 'suites';
 const CONFIG_FILE = 'test-boss.config.json';
@@ -142,7 +142,7 @@ export const runCommand = new Command()
 
     const playwrightProcess = spawn('npx', ['playwright', ...playwrightArgs], { stdio: 'inherit' });
 
-    playwrightProcess.on('close', (code) => {
+    playwrightProcess.on('close', async (code) => {
       if (code === 0) {
         console.log('Playwright tests finished successfully.');
       } else {
