@@ -3,6 +3,8 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import { spawn } from 'child_process';
 import * as yaml from 'js-yaml';
+import { compileSuite } from '../../runtime/src/compiler';
+import { loadStorageState } from '../../runtime/src/storage';
 
 const SUITES_DIR = 'suites';
 const CONFIG_FILE = 'test-boss.config.json';
@@ -80,26 +82,20 @@ export const runCommand = new Command()
     // 3. Resolve storage state path
     const storageStatePath = path.join(suitePath, '.auth', `storage-state.${options.session}.json`);
 
+    const storageState = await loadStorageState(storageStatePath);
+
     // TODO: 4. Handle missing storage state: prompt user or execute login step
-    if (!fs.existsSync(storageStatePath)) {
+    if (!storageState) {
       console.warn(`Warning: No storage state found for session '${options.session}'. Tests might require manual login.`);
       // For now, we'll proceed without storage state, but a future enhancement would be to prompt for login or run a login step.
     }
 
     // 5. Call packages/runtime/compiler.ts to generate spec.generated.ts
-    // This part will be implemented once the runtime/compiler is available.
     const generatedSpecPath = path.join(suitePath, 'generated', 'spec.generated.ts');
     await fs.ensureDir(path.dirname(generatedSpecPath));
-    // For now, create a dummy file
-    await fs.writeFile(generatedSpecPath, `
-      import { test, expect } from '@playwright/test';
-
-      test('dummy test', async ({ page }) => {
-        await page.goto('${envConfig.baseUrl || envConfig.loginHost}');
-        await expect(page).toHaveURL(/.*salesforce.com/);
-      });
-    `);
-    console.log(`Generated dummy spec file: ${generatedSpecPath}`);
+    const playwrightTestContent = await compileSuite(suitePath);
+    await fs.writeFile(generatedSpecPath, playwrightTestContent);
+    console.log(`Generated Playwright spec file: ${generatedSpecPath}`);
 
     // 6. Execute Playwright test
     const tempPlaywrightConfigPath = path.join(suitePath, 'generated', 'playwright.config.ts');
@@ -126,7 +122,7 @@ export const runCommand = new Command()
             use: {
               ...devices['Desktop Chrome'],
               // Conditional storageState
-              ${fs.existsSync(storageStatePath) ? `storageState: '${storageStatePath}',` : ''}
+              ${storageState ? `storageState: '${storageState}',` : ''}
             },
           },
         ],

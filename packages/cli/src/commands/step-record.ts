@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import { spawn } from 'child_process';
 import * as yaml from 'js-yaml';
+import { saveStorageState } from '../../runtime/src/storage';
 
 const SUITES_DIR = 'suites';
 const CONFIG_FILE = 'test-boss.config.json';
@@ -114,6 +115,7 @@ export const stepRecordCommand = new Command()
         // TODO: Interactive terminal preview
         // TODO: Save to YAML
         // TODO: Save storage state (if new login occurred)
+        // Example: await saveStorageState(page, storageStatePath); // 'page' object would need to be accessible here
         console.log('Codegen Raw Output:\n', codegenOutput);
       } else {
         console.error(`Playwright Codegen exited with code ${code}`);
