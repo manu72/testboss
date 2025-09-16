@@ -48,3 +48,9 @@ pnpm-debug.log*
 .idea/
 .vscode/
 *.swp
+
+# misc
+*.json
+*.tsbuildinfo
+sit.yaml
+suite.yaml

@@ -1,0 +1,7 @@
+id: "000_login"
+title: "Login to Salesforce"
+actions:
+  - navigate: "{{loginHost}}"
+  - eval_js: "// Manual login required. Test Boss will save storage state."
+assertions:
+  - url_contains: "lightning.force.com"

@@ -17,5 +17,10 @@
     },
     "composite": true
   },
+  "references": [
+    { "path": "./packages/cli" },
+    { "path": "./packages/runtime" },
+    { "path": "./packages/ai" }
+  ],
   "exclude": ["node_modules", "dist"]
 }
