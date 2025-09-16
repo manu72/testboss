@@ -86,7 +86,7 @@ npm run cli -- suite create "Accounts_Smoke"
 
 ## 3. Record Test Steps
 
-This command opens a headed browser, allowing you to manually log into Salesforce and record your actions. The recorded actions will be captured (though currently only logged to console, not saved to YAML).
+This command opens a headed browser using Playwright Codegen, allowing you to manually log into Salesforce and record your actions. The recorded actions are automatically converted to Test Boss YAML format and saved as step files.
 
 ```bash
 npm run cli -- step record --suite "Accounts_Smoke" --env sit
@@ -96,13 +96,19 @@ npm run cli -- step record --suite "Accounts_Smoke" --env sit
 
 **Instructions during recording:**
 1.  A Playwright browser will open to the Salesforce login host.
-2.  Manually log in to Salesforce.
+2.  Manually log in to Salesforce (if not already logged in from previous sessions).
 3.  Perform the actions you want to record (e.g., navigate to Accounts, create a new account, save it).
 4.  Close the Playwright browser window when you are finished recording.
+5.  Review the recorded actions in the terminal preview.
+6.  Confirm whether to save the step and optionally edit the step title.
 
 **Expected Output:**
-*   A Playwright browser window will open.
-*   After closing the browser, the raw Codegen output will be printed to the console. (Note: In this POC, the steps are not yet saved to YAML files automatically.)
+*   A Playwright browser window will open with Codegen recorder.
+*   After closing the browser, you'll see a preview of recorded actions.
+*   Interactive prompts will ask you to confirm saving and allow you to customize the step title.
+*   The step will be saved as a YAML file in the `suites/{suite-name}/steps/` directory.
+*   The step will be automatically added to your suite configuration.
+*   Browser session state will be saved for future runs (eliminates need for repeated login).
 
 ## 4. Run the Test Suite
 
