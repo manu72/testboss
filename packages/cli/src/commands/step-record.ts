@@ -79,6 +79,10 @@ export const stepRecordCommand = new Command()
 
     // 3. Determine start URL and storage state
     const startUrl = options.url || envConfig.baseUrl || envConfig.loginHost;
+    if (!startUrl) {
+      console.error('Error: Could not determine a starting URL for Codegen. Please provide --url option, or ensure baseUrl or loginHost are configured in your environment YAML.');
+      process.exit(1);
+    }
     const storageStatePath = path.join(suitePath, '.auth', `storage-state.${options.session}.json`);
 
     const codegenArgs: string[] = [
