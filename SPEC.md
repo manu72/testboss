@@ -1,20 +1,24 @@
 # SPEC.md
 
 ## Title
+
 Test Boss POC
 
 ## Summary
-Test Boss is a standalone CLI for Mac OS that lets a tester create a named suite, record browser steps against Salesforce in a real headed browser, run those steps with Playwright, and view results with traces, screenshots, and video. The tool keeps suites on disk as folders with YAML step files. It includes lightweight AI helpers to improve selectors and propose assertions so tests remain stable without hardcoded rules where possible.
+
+Test Boss is a standalone CLI for Mac OS that lets a tester create a named suite, record browser steps against Salesforce using Playwright, run those steps with Playwright, and view results with traces, screenshots, and video. The tool keeps suites on disk as folders with YAML step files. It includes lightweight AI helpers to improve selectors and propose assertions so tests remain stable without hardcoded rules where possible.
 
 ## Scope for POC
+
 1. Create a named test suite as a local folder with boilerplate.
-2. Create and record test steps inside that suite.
+2. Create and record test steps inside that suite using Playwright.
 3. Run the suite in a visible browser so the user can watch the flow.
 4. Show results with Playwright HTML report, per step screenshots, and trace viewer.
 5. Login is manual through the Salesforce UI. On first run Test Boss captures and reuses Playwright storage state for that suite so MFA is not required on every run.
 6. Add minimal AI assistance for selector choice and assertion suggestions. AI is provider neutral and can be disabled.
 
 ## Out of scope for POC
+
 1. CI and remote runners.
 2. JWT or frontdoor auth.
 3. Cross browser matrix or parallel sharding.
@@ -22,6 +26,7 @@ Test Boss is a standalone CLI for Mac OS that lets a tester create a named suite
 5. Complex test data factories.
 
 ## Constraints and assumptions
+
 - Platform is Mac OS with Node 20 or later.
 - Default login host is https://test.salesforce.com. A suite can override with a specific My Domain login URL.
 - No dependence on the Salesforce codebase or SFDX. This is a separate repo and tool.
@@ -29,6 +34,7 @@ Test Boss is a standalone CLI for Mac OS that lets a tester create a named suite
 - The user may want multiple saved sessions for different Salesforce users. The POC supports named sessions per suite.
 
 ## High level design
+
 - The project is structured as a pnpm monorepo.
 - CLI in TypeScript using Commander.
 - Playwright supplies browser control, recorder, and report.
@@ -37,6 +43,7 @@ Test Boss is a standalone CLI for Mac OS that lets a tester create a named suite
 - All suite data lives under a suites directory. No external services required.
 
 ## Folder layout
+
 ```
 test-boss/
   packages/
@@ -88,6 +95,7 @@ test-boss/
 ```
 
 ## Suite on disk
+
 ```
 suites/
   Accounts_Smoke/
@@ -111,6 +119,7 @@ suites/
 ```
 
 ## CLI commands
+
 ```
 tb init
   Create local config (e.g., `test-boss.config.json`) in the current repo and a suites folder.
@@ -139,6 +148,7 @@ tb ai tune [--suite <name>] [--step <file>] [--dry-run]
 ## Config files
 
 ### suite.yaml
+
 ```yaml
 name: "Accounts Smoke"
 description: "Core UI flows for Account create edit view"
@@ -151,6 +161,7 @@ steps:
 ```
 
 ### env/sit.yaml
+
 ```yaml
 name: "SIT"
 loginHost: "https://test.salesforce.com"
@@ -171,6 +182,7 @@ ai:
 ## Step YAML schema
 
 ### Minimal example
+
 ```yaml
 id: "010_create_account"
 title: "Create Account"
@@ -193,6 +205,7 @@ assertions:
 ```
 
 ### Supported actions
+
 - navigate: relative or absolute URL
 - click: locator
 - fill: locator plus value
@@ -202,6 +215,7 @@ assertions:
 - eval_js: small script for advanced cases
 
 ### Supported assertions
+
 - url_contains
 - url_matches
 - visible_text with optional within scope
@@ -213,6 +227,7 @@ assertions:
   - expect map of field equals values
 
 ## Recorder design
+
 - Launch headed Chromium.
 - Navigate to env.baseUrl or to loginHost if storage state is missing.
 - The user logs in manually.
@@ -224,6 +239,7 @@ assertions:
 - The step is saved to YAML with a generated id and title.
 
 ## Runtime execution
+
 - Load suite and env.
 - Resolve storage state file for the chosen session. If missing, run a login step first or prompt the user to run step record login.
 - Compile YAML to a single spec.generated.ts with one Playwright test per step. Each action maps to a helper that wraps waits and error context.
@@ -231,29 +247,36 @@ assertions:
 - On failure the runtime captures a screenshot and ensures the trace is saved.
 
 ### Compiler mapping example
+
 YAML
+
 ```yaml
 - click:
     locator: role=button[name="Save"]
 ```
+
 Generated TypeScript
+
 ```ts
 await page.getByRole("button", { name: "Save" }).click();
 ```
 
 ## Selector helpers
+
 - Parse the short locator syntax into Playwright calls.
-  - data-testid=foo  → page.locator('[data-testid="foo"]')
+  - data-testid=foo → page.locator('[data-testid="foo"]')
   - role=button[name="Save"] → page.getByRole("button", { name: "Save" })
   - text="New Case" within role=region[name="Related"] → region scoped search
 - Provide a region scope helper so steps can avoid global text matches.
 
 ## Assertion helpers
+
 - url_contains and url_matches use expect(page).toHaveURL with timeout from config.
 - visible_text uses a scoped locator and toBeVisible plus toContainText.
 - api_check is optional. It issues a GET to the REST resource when instance URL and token are available. In the POC this can be disabled by omitting token. The step still passes if other assertions pass.
 
 ## Login flow and sessions
+
 - First run of a suite will open the login host in a headed browser.
 - User enters credentials and completes MFA once if required.
 - After success Test Boss saves storage state to .auth/storage-state.default.json.
@@ -263,6 +286,7 @@ await page.getByRole("button", { name: "Save" }).click();
 ## AI helpers
 
 ### Provider interface
+
 ```ts
 export interface AIProvider {
   complete(params: {
@@ -274,36 +298,43 @@ export interface AIProvider {
 ```
 
 ### Locator advisor prompt outline
+
 - System. You are a senior Salesforce test engineer. Produce a durable Playwright locator. Prefer data test id. Then role and accessible name. Avoid deep CSS. Return only the best locator in a compact syntax.
 - User. Event type, raw selector from recorder, outerHTML of element, aria attributes, candidate text near the element.
 
 ### Assertion suggester prompt outline
+
 - System. Propose one or two assertions that validate user visible outcome with low flake. Use url matches and visible text. Optionally suggest a read only API check. Return YAML snippet only.
 - User. Step description, element kind, before and after url, small DOM diff.
 
 ### Step normalizer
+
 - Reduce noisy events into higher value actions.
 - Example. Multiple focus and key events collapse into one fill.
 
 AI can be turned off with a flag. The recorder then keeps raw Playwright selectors.
 
 ## Reports and artifacts
+
 - Playwright HTML report is stored under artifacts/last-run/playwright-report.
 - Screenshots and traces are stored per test. The tool prints a local path after the run.
 - tb report open launches the HTML report in the default browser.
 
 ## Error handling
+
 - Clear console summary with step id, title, pass or fail, and duration.
 - On failure show first error line and a path to screenshot and trace.
 - Exit code is non zero if any step fails.
 
 ## Security and privacy
+
 - Storage state files live under .auth with a gitignore.
 - No secrets are written to YAML.
 - AI requests include only small DOM snippets and never include full pages or credentials.
 - The tool operates only on SIT or other non production orgs.
 
 ## Minimal happy path
+
 1. `tb init`
 2. `tb suite create "Accounts_Smoke"`
 3. `tb step record --suite "Accounts_Smoke" --env sit`
@@ -317,29 +348,35 @@ AI can be turned off with a flag. The recorder then keeps raw Playwright selecto
 ## Developer tasks
 
 ### CLI
+
 - Implement commands listed above with Commander.
 - Add a small spinner and clear prompts with Inquirer.
 
 ### Runtime
+
 - YAML schema validation with zod.
 - Locator parser and scope helper.
 - Action and assertion executors with sensible waits.
 - Storage state loader and writer.
 
 ### Recorder
+
 - Use Playwright codegen as a source of events or a lightweight custom content script that captures clicks and inputs.
 - Build a terminal review loop that shows AI suggestions and lets the user edit before save.
 
 ### AI layer
+
 - Provider interface plus OpenAI compatible adapter using env vars TB_AI_API_KEY and TB_AI_BASE_URL.
 - Three prompt files as listed above.
 - Safe mode that redacts long attribute values.
 
 ### Templates
+
 - Template suite with a login step and a blank step.
 - .gitignore files for artifacts and auth.
 
 ## Acceptance criteria
+
 - A tester can create a suite, record a login plus one simple CRUD flow, run it in a visible browser, and open the HTML report without touching Playwright directly.
 - Storage state is saved and reused so the second run does not prompt for login.
 - With AI on, at least one recorded step shows an upgraded locator or assertion compared to the raw capture.
@@ -348,6 +385,7 @@ AI can be turned off with a flag. The recorder then keeps raw Playwright selecto
 ## Example code snippets
 
 ### Short locator parser
+
 ```ts
 export function toLocator(page, token: string) {
   if (token.startsWith("data-testid=")) {
@@ -368,6 +406,7 @@ export function toLocator(page, token: string) {
 ```
 
 ### Action executor example
+
 ```ts
 export async function execAction(page, action) {
   if (typeof action.navigate === "string") {
