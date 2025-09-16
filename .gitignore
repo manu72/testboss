@@ -54,3 +54,4 @@ pnpm-debug.log*
 *.tsbuildinfo
 sit.yaml
 suite.yaml
+suites/
