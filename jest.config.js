@@ -2,9 +2,7 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  testMatch: [
-    "<rootDir>/packages/**/?(*.)+(spec|test).[jt]s?(x)"
-  ],
+  testMatch: [],
   moduleNameMapper: {
     "^@testboss/cli/(.*)$": "<rootDir>/packages/cli/src/$1",
     "^@testboss/runtime/(.*)$": "<rootDir>/packages/runtime/src/$1",
@@ -13,9 +11,9 @@ module.exports = {
   collectCoverage: true,
   coverageDirectory: "coverage",
   coverageReporters: ["json", "lcov", "text", "clover"],
-  globals: {
-    'ts-jest': {
+  transform: {
+    '^.+\.[tj]sx?$': ['ts-jest', {
       tsconfig: 'tsconfig.json',
-    },
+    }],
   },
 };
