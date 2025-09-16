@@ -12,7 +12,8 @@ interface SuiteConfig {
 }
 
 interface Step {
-  name: string;
+  id: string;
+  title: string;
   action: {
     type: string;
     locator?: string;
@@ -51,7 +52,7 @@ export async function compileSuite(suitePath: string): Promise<string> {
     const step: Step = yaml.load(await fs.readFile(stepFilePath, 'utf8')) as Step;
 
     playwrightTestContent += `
-        // Step: ${step.name}
+        // Step: ${step.title}
     `;
 
     switch (step.action.type) {
@@ -75,7 +76,7 @@ export async function compileSuite(suitePath: string): Promise<string> {
         break;
       // Add more action types as needed
       default:
-        console.warn(`Warning: Unknown action type '${step.action.type}' in step '${step.name}'. Skipping.`);
+        console.warn(`Warning: Unknown action type '${step.action.type}' in step '${step.title}'. Skipping.`);
     }
 
     if (step.assertions) {
@@ -113,9 +114,10 @@ export async function compileSuite(suitePath: string): Promise<string> {
               playwrightTestContent += `    await locatorHasValue(toLocator(page, '${assertion.locator}'), '${assertion.value}');
 `;
             }
+            break;
           // Add more assertion types as needed
           default:
-            console.warn(`Warning: Unknown assertion type '${assertion.type}' in step '${step.name}'. Skipping.`);
+            console.warn(`Warning: Unknown assertion type '${assertion.type}' in step '${step.title}'. Skipping.`);
         }
       }
     }

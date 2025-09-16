@@ -21,7 +21,7 @@ export function toLocator(page: Page, token: string): Locator {
         });
         return page.getByRole(role as any, attrMap);
       } else {
-        return page.getByRole(role as any);
+        return page.getByRole(role as any, {});
       }
     }
   } else if (token.startsWith('text=')) {

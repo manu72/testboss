@@ -17,6 +17,7 @@
     "packages/*"
   ],
   "devDependencies": {
+    "@playwright/test": "^1.55.0",
     "@types/fs-extra": "^11.0.4",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.4.0",
@@ -25,5 +26,9 @@
     "ts-jest": "^29.4.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "js-yaml": "^4.1.0"
   }
 }

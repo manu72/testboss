@@ -2,18 +2,18 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  testMatch: [],
+  testMatch: [
+    "<rootDir>/packages/**/*.test.ts",
+    "<rootDir>/packages/**/*.spec.ts"
+  ],
   moduleNameMapper: {
-    "^@testboss/cli/(.*)$": "<rootDir>/packages/cli/src/$1",
-    "^@testboss/runtime/(.*)$": "<rootDir>/packages/runtime/src/$1",
-    "^@testboss/ai/(.*)$": "<rootDir>/packages/ai/src/$1"
+    "^@test-boss/(.*)$": "<rootDir>/packages/$1/src"
   },
-  collectCoverage: true,
+  collectCoverageFrom: [
+    "<rootDir>/packages/**/src/**/*.ts",
+    "!**/node_modules/**",
+    "!**/dist/**"
+  ],
   coverageDirectory: "coverage",
-  coverageReporters: ["json", "lcov", "text", "clover"],
-  transform: {
-    '^.+\.[tj]sx?$': ['ts-jest', {
-      tsconfig: 'tsconfig.json',
-    }],
-  },
+  coverageReporters: ["json", "lcov", "text", "clover"]
 };
