@@ -3,6 +3,7 @@
     "target": "es2020",
     "module": "commonjs",
     "lib": ["es2020", "dom"],
+    "types": ["jest", "node", "playwright", "js-yaml"],
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -10,17 +11,13 @@
     "outDir": "./dist",
     "rootDir": ".",
     "baseUrl": ".",
+    "typeRoots": ["./node_modules/@types", "./node_modules/playwright", "./node_modules/js-yaml"],
     "paths": {
       "@testboss/cli/*": ["./packages/cli/src/*"],
       "@testboss/runtime/*": ["./packages/runtime/src/*"],
       "@testboss/ai/*": ["./packages/ai/src/*"]
-    },
-    "composite": true
+    }
   },
-  "references": [
-    { "path": "./packages/cli" },
-    { "path": "./packages/runtime" },
-    { "path": "./packages/ai" }
-  ],
+  "include": ["packages/**/*.ts", "jest.config.js"],
   "exclude": ["node_modules", "dist"]
 }

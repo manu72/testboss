@@ -6,24 +6,29 @@ interface AssertionOptions {
 }
 
 export async function urlContains(page: Page, urlPart: string, options?: AssertionOptions) {
-  await expect(page).toHaveURL(new RegExp(`.*${urlPart}.*`), { timeout: options?.timeout });
+  const expectOptions = options?.timeout !== undefined ? { timeout: options.timeout } : undefined;
+  await expect(page).toHaveURL(new RegExp(`.*${urlPart}.*`), expectOptions);
 }
 
 export async function urlMatches(page: Page, urlRegex: string, options?: AssertionOptions) {
-  await expect(page).toHaveURL(new RegExp(urlRegex), { timeout: options?.timeout });
+  const expectOptions = options?.timeout !== undefined ? { timeout: options.timeout } : undefined;
+  await expect(page).toHaveURL(new RegExp(urlRegex), expectOptions);
 }
 
 export async function visibleText(locator: Locator, text: string, options?: AssertionOptions) {
-  await expect(locator).toBeVisible({ timeout: options?.timeout });
-  await expect(locator).toContainText(text, { timeout: options?.timeout });
+  const expectOptions = options?.timeout !== undefined ? { timeout: options.timeout } : undefined;
+  await expect(locator).toBeVisible(expectOptions);
+  await expect(locator).toContainText(text, expectOptions);
 }
 
 export async function locatorExists(locator: Locator, options?: AssertionOptions) {
-  await expect(locator).toBeAttached({ timeout: options?.timeout });
+  const expectOptions = options?.timeout !== undefined ? { timeout: options.timeout } : undefined;
+  await expect(locator).toBeAttached(expectOptions);
 }
 
 export async function locatorHasValue(locator: Locator, value: string, options?: AssertionOptions) {
-  await expect(locator).toHaveValue(value, { timeout: options?.timeout });
+  const expectOptions = options?.timeout !== undefined ? { timeout: options.timeout } : undefined;
+  await expect(locator).toHaveValue(value, expectOptions);
 }
 
 // TODO: Implement basic api_check (read-only GET request)

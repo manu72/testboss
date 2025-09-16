@@ -7,7 +7,27 @@ This guide provides instructions for manually testing the Proof of Concept (POC)
 *   Mac OS
 *   Node.js 20 or later
 *   pnpm (install globally via `npm install -g pnpm`)
-*   Test Boss repository cloned and dependencies installed (`pnpm install`).
+
+## Setup and Installation
+
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository-url> # Replace with the actual repository URL
+    cd test-boss
+    ```
+2.  **Install dependencies:**
+    ```bash
+    pnpm install
+    ```
+3.  **Build the CLI package:** This compiles the TypeScript code into JavaScript.
+    ```bash
+    pnpm build
+    ```
+4.  **Link the CLI package:** This makes the `tb` command available in your shell.
+    ```bash
+    pnpm link --global @testboss/cli
+    ```
+    *   **Note:** If you encounter a `EACCES` permission error, you might need to run this with `sudo` (e.g., `sudo pnpm link --global @testboss/cli`) or configure pnpm for global installations without `sudo`.
 
 ## 1. Initialize the Project
 
