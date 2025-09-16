@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import { initCommand } from './commands/init';
 import { suiteCreateCommand } from './commands/suite-create';
 import { stepRecordCommand } from './commands/step-record';
+import { runCommand } from './commands/run';
 
 const program = new Command();
 
@@ -16,6 +17,7 @@ const suiteCommand = new Command('suite')
   .description('Manage test suites');
 suiteCommand.addCommand(suiteCreateCommand);
 suiteCommand.addCommand(stepRecordCommand);
+suiteCommand.addCommand(runCommand);
 program.addCommand(suiteCommand);
 
 // Add other commands here as they are implemented
