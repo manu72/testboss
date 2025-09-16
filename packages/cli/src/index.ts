@@ -3,6 +3,8 @@ import { initCommand } from './commands/init';
 import { suiteCreateCommand } from './commands/suite-create';
 import { stepRecordCommand } from './commands/step-record';
 import { runCommand } from './commands/run';
+import { reportOpenCommand } from './commands/report-open';
+import { sessionSaveCommand } from './commands/session-save';
 
 const program = new Command();
 
@@ -18,6 +20,8 @@ const suiteCommand = new Command('suite')
 suiteCommand.addCommand(suiteCreateCommand);
 suiteCommand.addCommand(stepRecordCommand);
 suiteCommand.addCommand(runCommand);
+suiteCommand.addCommand(reportOpenCommand);
+suiteCommand.addCommand(sessionSaveCommand);
 program.addCommand(suiteCommand);
 
 // Add other commands here as they are implemented
